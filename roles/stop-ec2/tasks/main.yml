@@ -1,0 +1,20 @@
+- name: Displays list of security groups
+  ec2_group_facts:
+    aws_access_key: "{{ec2_access_key}}"
+    aws_secret_key: "{{ec2_secret_key}}"
+    region: "{{region}}"
+    filters:
+      "tag:name": dummy-security
+  register: securityGroupList
+
+
+- name: displays security groups
+  debug: msg="{{item.group_name}}"
+  with_items: "{{securityGroupList.security_groups}}"
+
+
+- name: Terminate currently running Instances
+  ec2:
+    state: 'absent'
+    region: "{{region}}"
+    instance_ids: "{{ec2.instance_ids}}"

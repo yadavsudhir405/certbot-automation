@@ -1,0 +1,7 @@
+- name: copy file to sudhir_desktop
+  copy:
+    src: "/Users/sudhiry/gitlab-yadavsudhir/ansible-practise/{{item[0]}}/{{item[1]}}"
+    dest: "/etc/nginx/ssl/{{item[0]}}/{{item[1] | regex_replace('1')}}"
+  with_nested:
+    - "{{ domains }}"
+    - ['cert1.pem','chain1.pem','fullchain1.pem','privkey1.pem']

@@ -1,0 +1,19 @@
+- name: change file permissions
+  file:
+    path: /etc/letsencrypt/archive
+    recurse: yes
+    owner: root
+    group: root
+    mode: '777'
+  loop: "{{ domains }}"
+
+
+
+- name: Pull Certificates for gitlab.yadavsudhir.com
+  fetch:
+    src: "/etc/letsencrypt/archive/{{ item[0] }}/{{ item[1] }}"
+    dest: "./{{ item[0]}}/{{ item[1] }}"
+    flat: yes
+  with_nested:
+    - "{{ domains }}"
+    - ['cert1.pem','chain1.pem','fullchain1.pem','privkey1.pem']

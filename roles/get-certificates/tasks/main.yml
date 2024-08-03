@@ -1,0 +1,6 @@
+
+- name: Install certificate for www.yadavsudhir.com
+  become: yes
+  command: certbot certonly --nginx --non-interactive --agree-tos -m yadavsudhir405@gmail.com -d {{ item|quote}}
+  loop: "{{ domains }}"
+

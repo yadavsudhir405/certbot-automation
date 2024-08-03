@@ -1,0 +1,22 @@
+
+- name: Install software that manages third party software
+  apt:
+    state: present
+    update_cache: yes
+    name: software-properties-common
+
+
+- name: Add Certboot ppa repository
+  apt_repository:
+    repo: 'ppa:certbot/certbot'
+
+
+- name: Install Cert boot
+  apt:
+    state: present
+    update_cache: yes
+    name: "{{packages}}"
+  vars:
+    packages:
+      - certbot
+      - python-certbot-nginx

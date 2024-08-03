@@ -1,0 +1,21 @@
+- name: Add security group
+  ec2_group:
+    name: "{{group_id}}"
+    description: sg with rule descriptions
+    vpc_id: "{{vpc_id}}"
+    region: "{{region}}"
+    state: present
+    tags:
+      name: dummy-security
+    rules:
+      - proto: tcp
+        ports:
+          - 80
+        cidr_ip: 0.0.0.0/0
+        rule_desc: allow all on port 80
+      - proto: tcp
+        ports:
+          - 22
+        cidr_ip: 0.0.0.0/0
+        rule_desc: allow ssh from any where on port 22
+  register: securityGroup

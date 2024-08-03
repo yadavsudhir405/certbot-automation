@@ -1,0 +1,11 @@
+
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    key_name: sudhir-new-key-pair
+    region: us-east-2
+    vpc_subnet_id: subnet-88f2c3e0
+    vpc_id: vpc-26050c4e
+  roles:
+    - add-dns-entries

@@ -1,0 +1,88 @@
+
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    key_name: sudhir-new-key-pair
+    region: us-east-2
+    image: ami-0d5d9d301c853a04a # ubuntu
+    group_id: dummySecurityGroup
+    id: nginx
+    count: 1
+    vpc_subnet_id: subnet-88f2c3e0
+    vpc_id: vpc-26050c4e
+    domains:
+      - www.yadavsudhir.com
+      - gitlab.yadavsudhir.com
+      - apps.yadavsudhir.com
+      - harbor.yadavsudhir.com
+      - kiali.yadavsudhir.com
+      - jagar.yadavsudhir.com
+      - grafana.yadavsudhir.com
+      - prometheus.yadavsudhir.com
+  tags:
+    - step1
+  roles:
+    - terminate-running-instances
+    - create-security-group
+    - start-ec2
+    - add-dns-entries
+
+
+
+- name: Install packages to hosts
+  hosts: launched
+  become: True
+  gather_facts: True
+  tags:
+    - step2
+  vars:
+    ansible_ssh_private_key_file: ./sudhir-new-key-pair.pem
+    domains:
+      - www.yadavsudhir.com
+      - gitlab.yadavsudhir.com
+      - apps.yadavsudhir.com
+      - harbor.yadavsudhir.com
+      - kiali.yadavsudhir.com
+      - jagar.yadavsudhir.com
+      - grafana.yadavsudhir.com
+      - prometheus.yadavsudhir.com
+  roles:
+    - install-nginx
+    - install-cert-bot
+    - get-certificates
+    - pull-certificates
+
+
+
+
+- name: Install certificates
+  hosts: sudhir_machines
+  gather_facts: true
+  vars:
+    domains:
+      - www.yadavsudhir.com
+      - gitlab.yadavsudhir.com
+      - apps.yadavsudhir.com
+      - harbor.yadavsudhir.com
+      - kiali.yadavsudhir.com
+      - jagar.yadavsudhir.com
+      - grafana.yadavsudhir.com
+      - prometheus.yadavsudhir.com
+  tags:
+    - step3
+  roles:
+    - copy-certificates
+    - restart-nginx
+
+
+- hosts: localhost
+  name: Cleanup
+  connection: local
+  gather_facts: false
+  tags:
+    - step4
+  vars:
+    region: us-east-2
+  roles:
+    - stop-ec2

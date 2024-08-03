@@ -1,0 +1,10 @@
+- hosts: localhost
+  name: Cleanup
+  connection: local
+  gather_facts: false
+  tags:
+    - step4
+  vars:
+    region: us-east-2
+  roles:
+    - terminate-running-instances

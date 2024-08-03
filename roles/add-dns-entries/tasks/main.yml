@@ -1,0 +1,28 @@
+
+- name: Create a public zone
+  route53_zone:
+    aws_access_key: "{{ec2_access_key}}"
+    aws_secret_key: "{{ec2_secret_key}}"
+    vpc_id: "{{vpc_id}}"
+    region: "{{region}}"
+    zone: yadavsudhir.com
+    comment: this is an example
+  register: resZone
+
+
+- name: Create DNS entries for domains
+  route53:
+    aws_access_key: "{{ec2_access_key}}"
+    aws_secret_key: "{{ec2_secret_key}}"
+    vpc_id: "{{vpc_id}}"
+    state: present
+    hosted_zone_id: "{{resZone.zone_id}}"
+    overwrite: yes
+    record: "{{ item }}"
+    type: A
+    ttl: 5
+    value: "{{ ec2.instances[0].public_ip}}"
+    wait: yes
+
+  loop: "{{ domains }}"
+
